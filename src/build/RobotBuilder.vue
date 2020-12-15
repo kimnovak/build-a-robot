@@ -1,23 +1,25 @@
 <template>
    <div class="content">
      <div class="preview">
-      <div class="preview-content">
-        <div class="top-row">
-          <img :src="selectedRobot.head.src"/>
+       <CollapsibleSection>
+        <div class="preview-content">
+          <div class="top-row">
+            <img :src="selectedRobot.head.src"/>
+          </div>
+          <div class="middle-row">
+            <img :src="selectedRobot.leftArm.src" class="rotate-left"/>
+            <img :src="selectedRobot.torso.src"/>
+            <img :src="selectedRobot.rightArm.src" class="rotate-right"/>
+          </div>
+          <div class="bottom-row">
+            <img :src="selectedRobot.base.src"/>
+          </div>
         </div>
-        <div class="middle-row">
-          <img :src="selectedRobot.leftArm.src" class="rotate-left"/>
-          <img :src="selectedRobot.torso.src"/>
-          <img :src="selectedRobot.rightArm.src" class="rotate-right"/>
-        </div>
-        <div class="bottom-row">
-          <img :src="selectedRobot.base.src"/>
-        </div>
+        </CollapsibleSection>
         <button class="add-to-cart" @click="addToCart()">
           Add to cart
         </button>
       </div>
-    </div>
     <div class="top-row">
       <PartSelector :parts="availableParts.heads" position="top"
         @partSelected="part => this.selectedRobot.head = part"/>
@@ -66,11 +68,13 @@
 import availableParts from '../data/parts';
 import createdHookMixin from './created-hook-mixin';
 import PartSelector from './PartSelector.vue';
+import CollapsibleSection from '../shared/CollapsibleSection.vue';
 
 export default {
   name: 'RobotBuilder',
   components: {
     PartSelector,
+    CollapsibleSection,
   },
   data() {
     return {
@@ -93,14 +97,20 @@ export default {
   mixins: [createdHookMixin],
   computed: {
     headBorderStyle() {
-      return { border: this.selectedRobot.head.onSale ? '3px solid red' : '3px solid gray' };
+      return {
+        border: this.selectedRobot.head.onSale
+          ? '3px solid red'
+          : '3px solid gray',
+      };
     },
   },
   methods: {
     addToCart() {
       const robot = this.selectedRobot;
       const cost = robot.head.cost + robot.rightArm.cost
-        + robot.torso.cost + robot.leftArm.cost + robot.base.cost;
+        + robot.torso.cost
+        + robot.leftArm.cost
+        + robot.base.cost;
       this.cart.push({ ...robot, cost });
     },
   },
@@ -110,25 +120,25 @@ export default {
 <style lang="scss" scoped>
 .part {
   position: relative;
-  width:165px;
-  height:165px;
+  width: 165px;
+  height: 165px;
   border: 3px solid #aaa;
 }
 .part {
   img {
-    width:165px;
+    width: 165px;
   }
 }
 .top-row {
-  display:flex;
+  display: flex;
   justify-content: space-around;
 }
 .middle-row {
-  display:flex;
+  display: flex;
   justify-content: center;
 }
 .bottom-row {
-  display:flex;
+  display: flex;
   justify-content: space-around;
   border-top: none;
 }
@@ -152,7 +162,7 @@ export default {
 }
 .prev-selector {
   position: absolute;
-  z-index:1;
+  z-index: 1;
   top: -3px;
   left: -28px;
   width: 25px;
@@ -160,14 +170,15 @@ export default {
 }
 .next-selector {
   position: absolute;
-  z-index:1;
+  z-index: 1;
   top: -3px;
   right: -28px;
   width: 25px;
   height: 171px;
 }
-.center .prev-selector, .center .next-selector {
-  opacity:0.8;
+.center .prev-selector,
+.center .next-selector {
+  opacity: 0.8;
 }
 .left .prev-selector {
   top: -28px;
@@ -217,7 +228,8 @@ export default {
   padding: 3px;
   font-size: 16px;
 }
-td, th {
+td,
+th {
   text-align: left;
   padding: 5px;
   padding-right: 20px;
