@@ -15,6 +15,11 @@
         </ul>
       </nav>
     </header>
+    <div class="container">
+      <aside class="aside">
+        <router-view name="sidebar"/>
+      </aside>
+    </div>
     <main>
       <div class="robot-name">
         Test title
@@ -83,5 +88,16 @@ ul {
 }
 .router-link-active {
   color: white;
+}
+.container {
+  display: flex;
+  margin: 10px auto 0 auto;
+  justify-content: center;
+}
+.aside {
+  padding: 30px;
+  background-color: #aaa;
+  width: 100px;
+  min-height: 300px;
 }
 </style>
