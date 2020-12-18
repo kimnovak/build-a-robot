@@ -1,5 +1,5 @@
 <template>
-   <div class="content">
+   <div v-if="availableParts" class="content">
      <div class="preview">
        <CollapsibleSection>
         <div class="preview-content">
@@ -36,36 +36,10 @@
       <PartSelector :parts="availableParts.bases" position="bottom"
         @partSelected="part => this.selectedRobot.base = part"/>
     </div>
-    <div>
-      <h1>Cart</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>
-              Robot
-            </th>
-            <th class="cost">
-              Cost
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(robot, index) in cart" :key="index">
-            <td>
-              {{robot.head.title}}
-            </td>
-            <td>
-              {{robot.cost}}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
   </div>
 </template>
 
 <script>
-import availableParts from '../data/parts';
 import createdHookMixin from './created-hook-mixin';
 import PartSelector from './PartSelector.vue';
 import CollapsibleSection from '../shared/CollapsibleSection.vue';
@@ -84,9 +58,11 @@ export default {
     PartSelector,
     CollapsibleSection,
   },
+  created() {
+    this.$store.dispatch('getParts');
+  },
   data() {
     return {
-      availableParts,
       addedToCart: false,
       cart: [],
       selectedHeadIndex: 0,
@@ -112,6 +88,9 @@ export default {
           : '3px solid gray',
       };
     },
+    availableParts() {
+      return this.$store.state.parts;
+    },
   },
   methods: {
     addToCart() {
@@ -120,7 +99,7 @@ export default {
         + robot.torso.cost
         + robot.leftArm.cost
         + robot.base.cost;
-      this.cart.push({ ...robot, cost });
+      this.$store.commit('addRobotToCart', { ...robot, cost });
       this.addedToCart = true;
     },
   },
@@ -237,15 +216,6 @@ export default {
   width: 210px;
   padding: 3px;
   font-size: 16px;
-}
-td,
-th {
-  text-align: left;
-  padding: 5px;
-  padding-right: 20px;
-}
-.cost {
-  text-align: right;
 }
 .preview {
   position: absolute;
