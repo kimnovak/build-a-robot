@@ -40,6 +40,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
+
 import createdHookMixin from './created-hook-mixin';
 import PartSelector from './PartSelector.vue';
 import CollapsibleSection from '../shared/CollapsibleSection.vue';
@@ -59,7 +61,7 @@ export default {
     CollapsibleSection,
   },
   created() {
-    this.$store.dispatch('getParts');
+    this.getParts();
   },
   data() {
     return {
@@ -89,17 +91,18 @@ export default {
       };
     },
     availableParts() {
-      return this.$store.state.parts;
+      return this.$store.state.robots.parts;
     },
   },
   methods: {
+    ...mapActions('robots', ['getParts', 'addRobotToCart']),
     addToCart() {
       const robot = this.selectedRobot;
       const cost = robot.head.cost + robot.rightArm.cost
         + robot.torso.cost
         + robot.leftArm.cost
         + robot.base.cost;
-      this.$store.commit('addRobotToCart', { ...robot, cost });
+      this.addRobotToCart({ ...robot, cost }).then(() => this.$router.push('/cart'));
       this.addedToCart = true;
     },
   },
